@@ -9,8 +9,16 @@ datasource db {
 
 model produtos {
   id        String @id @default(auto()) @map("_id") @db.ObjectId
-  descricao String
-  img       String
-  nome      String
-  preco     String
+  categoria String?
+  estoque String?
+  descricao String?
+  img       String?
+  nome      String? @unique
+  preco     String?
+}
+
+model userAdmin{
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  nome String @unique
+  senha String @unique
 }

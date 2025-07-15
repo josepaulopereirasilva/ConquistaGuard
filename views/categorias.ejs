@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ConquistaGuard - Segurança</title>
+  <link rel="icon" href="/conquistaguard.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<style>
+  main h2 {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    font-size: 28px;
+  }
+</style>
+
+<body>
+  <header>
+    <div class="logo" onclick="redirect()" style="cursor: pointer; display: inline-block;">
+      <img src="/conquistaguard.ico" alt="ConquistaGuard Logo" />
+    </div>
+    <div id="divCabeça">
+      <div class="div_pesquisa">
+        <input type="text" class="input_pesquisa" id="campoBusca" placeholder="Busca para itens (<%=categoria%>)">
+        <button class="btn_pesquisa" id="botaoBusca">Buscar</button>
+        <div class="sugestoes" id="sugestoes"></div>
+      </div>
+      <div class="mini-menu">
+        <button class="mini-menu-btn" onclick="window.location.href='/categoria/todos'">Todos</button>
+        <button class="mini-menu-btn" onclick="window.location.href='/categoria/seguranca'">Segurança</button>
+        <button class="mini-menu-btn" onclick="window.location.href='/categoria/automacao'">Automação</button>
+        <div class="mini-menu-categorias">
+          <button class="mini-menu-btn">Categorias</button>
+          <div class="dropdown-categorias">
+            <%const categorias=[ 'alarmes' ,'sensores','câmeras','fechaduras','iluminação', 'kits']%>
+              <%categorias.forEach(function(categoria){%>
+                <% //TIRA O ACENTO DE CATEGORIAS, COMO O ^ EM CÂMERAS%>
+                  <%let nomeCategoria=categoria.normalize('NFD').replace(/[\u0300-\u036f]/g, '' )%>
+                    <a href="/categoria/<%=nomeCategoria%>">
+                      <%=categoria%>
+                    </a>
+                    <%})%>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/equipamentos">Equipamentos</a></li>
+        <li><a href="/sobre">Sobre</a></li>
+        <li><a href="/contato">Contato</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2><%=categoria%>
+    </h2>
+    <div class="lista-produtos">
+      <% produtos.forEach(produto=> { %>
+        <a href="/produto/<%= produto.nome %>" class="produto-link">
+          <div class="produto">
+            <div class="produto-img-container">
+              <img src="<%= produto.img.startsWith('data:') ? produto.img : 'data:image/jpeg;base64,' + produto.img %>"
+                alt="...">
+              <div class="preco">
+                <%= produto.preco %>
+              </div>
+            </div>
+            <div class="info-produto">
+              <h4>
+                <%= produto.nome %>
+              </h4>
+              <div class="botao-container"><button>Saiba Mais</button></div>
+            </div>
+          </div>
+        </a>
+        <% }); %>
+    </div>
+  </main>
+
+  <footer>
+    <p>Whatsapp:+55 (77) 9 8814-8527</p><br>
+    <p>&copy; 2025 ConquistaGuard. Todos os direitos reservados.</p>
+  </footer>
+
+  <script>
+    function redirect() {
+      window.location.href = '/';
+    }
+
+    function removeAcentos(texto) {
+      return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+
+    document.getElementById("botaoBusca").addEventListener("click", function () {
+      const termoBusca = removeAcentos(document.getElementById("campoBusca").value.toLowerCase());
+      const produtos = document.querySelectorAll(".produto");
+      const container_produtos = document.getElementById('produtos');
+
+      produtos.forEach(produto => {
+        const titulo = removeAcentos(produto.querySelector("h4").textContent.toLowerCase());
+        if (titulo.includes(termoBusca)) {
+          produto.style.display = "flex";
+        } else {
+          produto.style.display = "none";
+          container_produtos.style.textAlign = "center";
+        }
+      });
+    });
+
+    const campoBusca = document.getElementById("campoBusca");
+    const sugestoes = document.getElementById("sugestoes");
+
+    campoBusca.addEventListener("input", () => {
+      const termo = removeAcentos(campoBusca.value.toLowerCase());
+      sugestoes.style.opacity = '100%';
+      sugestoes.innerHTML = "";
+      if (termo.length === 0) {
+        sugestoes.style.opacity = '0';
+      }
+
+      const titulos = document.querySelectorAll(".produto h4");
+      titulos.forEach(titulo => {
+        const texto = removeAcentos(titulo.textContent.toLowerCase());
+        if (texto.includes(termo)) {
+          const slug = titulo.closest(".produto-link").getAttribute("href").split("/produto/")[1];
+          const item = document.createElement("div");
+          item.classList.add("sugestao-item");
+          item.textContent = titulo.textContent;
+          item.onclick = () => {
+            window.location.href = `/produto/${slug}`;
+          };
+          sugestoes.appendChild(item);
+        }
+      });
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!document.querySelector(".div_pesquisa").contains(e.target)) {
+        sugestoes.innerHTML = "";
+      }
+    });
+  </script>
+</body>
+
+</html>

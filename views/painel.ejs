@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Painel Administrativo</title>
+  <style>
+    .produtos-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .produto-card {
+      border: 1px solid #ccc;
+      padding: 10px;
+      width: 300px;
+      box-sizing: border-box;
+    }
+
+    .produto-card img {
+      max-width: 100%;
+      max-height: 150px;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .produto-card input,
+    .produto-card textarea {
+      width: 100%;
+      margin-bottom: 5px;
+    }
+
+    .produto-card textarea {
+      resize: vertical;
+    }
+
+    .produto-card button {
+      padding: 5px 10px;
+      margin-right: 5px;
+    }
+
+    .mensagem {
+      color: green;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Painel Administrativo</h1>
+
+  
+
+  <div class="produtos-container">
+    <% produtos.forEach(produto=> { %>
+      <div class="produto-card" data-id="<%= produto.id %>">
+        <img
+          src="<%= produto.img && produto.img.startsWith('data:') ? produto.img : (produto.img ? 'data:image/jpeg;base64,' + produto.img : '') %>"
+          alt="<%= produto.nome %>">
+        <input placeholder="nome..." type="text" name="nome" value="<%= produto.nome || '' %>">
+        <input placeholder="preço..." type="text" name="preco" value="<%= produto.preco || '' %>">
+        <input placeholder="categoria..." type="text" name="categoria" value="<%= produto.categoria %>">
+        <input placeholder="estoque..." type="text" name="estoque" value="<%= produto.estoque %>">
+        <textarea placeholder="descrição..."
+          name="descricao"><%= produto.descricao ? produto.descricao.replace(/\/\/enter/g, '\n') : '' %></textarea>
+
+        <label>Atualizar imagem:</label>
+        <input type="file" accept="image/*" onchange="uploadImagem(event, '<%= produto.id %>')">
+
+        <button onclick="salvarProduto('<%= produto.id %>')">Salvar</button>
+        <button onclick="deletarProduto('<%= produto.id %>')">❌ Deletar</button>
+        <div class="mensagem" id="resultado-<%= produto.id %>"></div>
+      </div>
+      <% }); %>
+      <button onclick="adicionarProduto()" style="max-height: 100px; margin-top: 100px;">➕ Adicionar Novo Produto</button>
+  </div>
+
+  <script>
+    function adicionarProduto() {
+      fetch('/admin/add', { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            location.reload();
+          } else {
+            alert('Erro ao adicionar produto.');
+          }
+        })
+        .catch(err => {
+          alert('Erro na requisição.');
+          console.error(err);
+        });
+    }
+
+    function deletarProduto(produtoId) {
+      if (confirm('Tem certeza que quer deletar este produto?')) {
+        fetch(`/admin/delete/${produtoId}`, { method: 'POST' })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              location.reload();
+            } else {
+              alert('Erro ao deletar produto.');
+            }
+          })
+          .catch(err => {
+            alert('Erro na requisição.');
+            console.error(err);
+          });
+      }
+    }
+
+    function uploadImagem(event, produtoId) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+
+      reader.onloadend = function () {
+        const base64String = reader.result.split(',')[1];
+        document.querySelector(`[data-id="${produtoId}"]`).setAttribute('data-img-base64', base64String);
+        const imgTag = document.querySelector(`[data-id="${produtoId}"] img`);
+        imgTag.src = reader.result;
+      };
+
+      if (file) {
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function salvarProduto(produtoId) {
+      const card = document.querySelector(`[data-id="${produtoId}"]`);
+      const nome = card.querySelector('input[name="nome"]').value;
+      const preco = card.querySelector('input[name="preco"]').value;
+      const descricaoRaw = card.querySelector('textarea[name="descricao"]').value;
+      const descricao = descricaoRaw.replace(/\n/g, '//enter');
+      const categoria = card.querySelector('input[name="categoria"]').value;
+      const estoque = card.querySelector('input[name="estoque"]').value;
+
+      let img = card.getAttribute('data-img-base64') || card.querySelector('img').src;
+
+      // garantir que só base64 puro vá pro backend
+      if (img.startsWith('data:')) {
+        img = img.split(',')[1];
+      } else if (img.startsWith('/imgProdutos/')) {
+        img = img; // se for path antigo (caso queira manter compatibilidade de path)
+      }
+
+      const resultado = document.getElementById(`resultado-${produtoId}`);
+
+      fetch(`/admin/update/${produtoId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, preco, descricao, img, categoria, estoque })
+      })
+        .then(response => response.json())
+        .then(data => {
+          resultado.innerHTML = "";
+          let mensagem = document.createElement("p");
+          mensagem.textContent = data.success ? "Atualizado com sucesso!" : "Falha ao atualizar.";
+          mensagem.style.color = data.success ? "green" : "red";
+          resultado.appendChild(mensagem);
+
+          // Remove a mensagem depois de 2 segundos
+          setTimeout(() => {
+            resultado.innerHTML = "";
+          }, 2000);
+        })
+        .catch(err => {
+          alert('Erro ao salvar produto');
+          console.error(err);
+        });
+    }
+  </script>
+</body>
+
+</html>

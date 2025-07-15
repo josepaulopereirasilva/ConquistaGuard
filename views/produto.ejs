@@ -64,9 +64,9 @@
   </header>
 
   <main class="produto-container">
-    <img src="/imgProdutos/<%= produto.img %>" alt="<%= produto.nome %>" />
+    <img src="<%= produto.img.startsWith('data:') ? produto.img : 'data:image/jpeg;base64,' + produto.img %>" alt="...">
     <h1><%= produto.nome %></h1>
-    <strong><%= produto.preco %></strong>
+    <strong><p style="margin: 0; padding: 0; margin-bottom: -40px; color: #000; font-size: 64px;"><%= produto.preco %></p></strong>
     <br>
     <div>
       <button onclick="alert('Compra simulada! Em breve você poderá finalizar o pagamento.')">Comprar</button>

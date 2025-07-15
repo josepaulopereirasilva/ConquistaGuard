@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor</title>
+</head>
+<body>
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome">
+    <label for="senha">Senha:</label>
+    <input type="password" id="senha">
+    <button id="btn">Entrar</button>
+    <div id="menssagem"></div>
+
+    <script>
+        const btn = document.getElementById("btn")
+        btn.addEventListener("click",function(){
+            const nome = document.getElementById("nome").value
+            const senha = document.getElementById("senha").value
+            const query = {
+                nome:nome,
+                senha:senha
+            }
+            fetch(`/loginEditor`,{
+                method:'POST',
+                headers:{
+                    'Content-type':'application/json'
+                },
+                body: JSON.stringify(query)
+            })
+            .then(response=>response.json())
+            .then(data=>{
+                const menssagem = document.getElementById("menssagem")
+                menssagem.textContent = data.menssagem
+                if(data.sucesso){
+                    window.location.href="/admin"
+                }
+            })
+        })
+    </script>
+</body>
+</html>

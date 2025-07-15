@@ -44,7 +44,9 @@
 <div class="containerBanner" id="containerBanner3">
     <div class="containerTexto" id="containerTexto3">
         <h1>O que fazemos</h1>
-        <p>Oferecemos sistemas de alarme inteligentes com sensores de movimento, sensores de abertura para portas e janelas, sirenes de alta potência e controle remoto de acesso. Todos os nossos produtos contam com conectividade Wi-Fi, possibilitando o monitoramento completo da sua casa pelo celular, em tempo real. Além dos alarmes, disponibilizamos acessórios como teclados RFID, chaveiros de acesso, controle remoto e sensores com dupla tecnologia (infravermelho + micro-ondas), que garantem uma proteção ainda mais eficaz.</p>
+        <p>Na ConquistaGuard, oferecemos soluções completas para transformar sua casa em um espaço mais seguro, inteligente e conectado. Trabalhamos com sistemas de alarme inteligentes, incluindo sensores de movimento, sensores de abertura para portas e janelas, sirenes de alta potência e controle remoto de acesso. Todos os dispositivos contam com conectividade Wi-Fi, permitindo o monitoramento em tempo real pelo celular, de qualquer lugar.</p>
+<p>Além da segurança, somos especialistas em automação residencial, trazendo tecnologia de ponta para facilitar o seu dia a dia. Integramos equipamentos modernos como teclados RFID, chaveiros de acesso, controles remotos, sensores com dupla tecnologia (infravermelho + micro-ondas), além de soluções para controle de iluminação, climatização, cortinas automatizadas e muito mais — tudo gerenciado pelo seu smartphone ou assistente virtual.</p>
+<p>Com a ConquistaGuard, você conquista não apenas proteção, mas também conforto, praticidade e eficiência energética, elevando sua residência a um novo nível de modernidade.</p>
       </div>
       <img src="/conquistaguard2.png" alt="" class="imagemInicial" id="imagemInicial3">
       <img src="/alarmeicon.png" alt="" class="imagemInicial" id="imagemInicial4">
@@ -127,8 +129,7 @@
   #containerBanner3{
     position: relative;
     display: flex;
-    min-height: 60vh;
-    max-height: 60vh;
+    min-height: 90vh;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -185,20 +186,22 @@
   }
   #imagemInicial3{
     position: static;
+    height: 40%;
+    width: auto;
   }
    #imagemInicial4{
     position: absolute;
-    left: 0px;
+    left: 20px;
     bottom: 0px;
-    max-height: 40vh;
-    min-height: 40vh;
+    max-height: 40%;
+    min-height: 40%;
   }
   #imagemInicial5{
     position: absolute;
     right: 2%;
     bottom: 0px;
-    max-height: 60%;
-    min-height: 60%;
+    max-height: 40%;
+    min-height: 40%;
   }
   #imagemInicial7{
     position: relative;
@@ -207,9 +210,11 @@
   }
   @media(max-width: 768px){
     .containerBanner, #containerBanner2, #containerBanner3, #containerBanner7{
-      max-height: 100vh;
-      min-height: 100vh;
+      min-height: 80vh;
+      height: auto;
+      max-height: 120vh;
       display: flex;
+      position: relative;
       flex-direction: column;
       align-items: center;
       justify-content: center;
@@ -220,22 +225,28 @@
     .containerTexto, #containerTexto2, #containerTexto3, #containerTexto4, #containerTexto7, #containerTexto8{
       max-width: 90vw;
       min-width: 90vw;
-      max-height: 100vh;
-      min-height: 50vh;
+      max-height: 50%;
+      min-height: 10%;
       position: static;
     }
      .containerTexto h1, #containerTexto2 h1, #containerTexto3 h1, #containerTexto4 h1, #containerTexto7 h1, #containerTexto8 h1{
       margin-top: 10px;
      }
-    .imagemInicial, #imageminicial2, #imagemInicial3, #imagemInicial4, #imagemInicial5, #imagemInicial7{
-      max-width: 80%;
-      min-width: 80%;
-      min-height: 40vh;
-      max-height: 70%;
+    .imagemInicial{
+      max-height: 50%;
+      height: auto;
+      width: auto;
+      max-width: 100%;
       position: static;
+      margin-top: 50px;
     }
     #imagemInicial4, #imagemInicial5{
       display: none;
+    }
+    #imagemInicial7{
+      width: 100%;
+      max-width: none;
+      height: auto;
     }
   }
  /* NÃO CONSIDERAR ESSA PARTE DO STYLE: 
@@ -378,6 +389,23 @@
   function redirect(){
     window.location.href = '/'
   }
+  //IDENTIFICA O ATALHO DE ADMIN
+  document.addEventListener('keydown', function(event) {
+  // Ignora se estiver digitando em um campo de formulário
+  if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+
+  // Debug: mostra no console o que foi pressionado
+  console.log('Tecla pressionada:', event.code, 
+              'Ctrl:', event.ctrlKey, 
+              'Shift:', event.shiftKey, 
+              'Alt:', event.altKey);
+
+  // Verifica Ctrl + Shift + Alt + M
+  if (event.ctrlKey && event.shiftKey && event.altKey && event.code === 'KeyA') {
+    console.log('Atalho detectado! Redirecionando para /editor');
+    window.location.href = '/editor';
+  }
+});
 </script>
 </body>
 </html>
