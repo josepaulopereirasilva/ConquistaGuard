@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,14 +15,16 @@
     }
 
     .conteudo h1 {
-    color: #ffcc00;
-    font-size: 32px;
-    margin-bottom: 20px;
-    text-align: left;
-    padding-left: 10px; /* mesmo padding dos inputs se desejar esse alinhamento */
-  }
+      color: #ffcc00;
+      font-size: 32px;
+      margin-bottom: 20px;
+      text-align: left;
+      padding-left: 10px;
+      /* mesmo padding dos inputs se desejar esse alinhamento */
+    }
   </style>
 </head>
+
 <body>
   <header>
     <div class="logo" onclick="redirect()" style="cursor: pointer; display: inline-block;">
@@ -37,12 +40,12 @@
   </header>
 
   <main class="conteudo">
-    
-    <form>
+
+    <form action="https://formsubmit.co/jeanphillip399@gmail.com" method="POST">
       <h1>Fale Conosco</h1>
-      <input type="text" placeholder="Seu nome" required />
-      <input type="email" placeholder="Seu e-mail" required />
-      <textarea placeholder="Sua mensagem" required></textarea>
+      <input type="text" name="name" placeholder="Seu nome" required />
+      <input type="email" name="email" placeholder="Seu e-mail" required />
+      <textarea name="message" placeholder="Sua mensagem" required></textarea>
       <button type="submit">Enviar</button>
     </form>
   </main>
@@ -52,9 +55,16 @@
     <p>&copy; 2025 ConquistaGuard. Todos os direitos reservados.</p>
   </footer>
   <script>
-    function redirect(){
+    function redirect() {
       window.location.href = '/'
     }
   </script>
+  <style>
+    textarea {
+      resize: vertical;
+      /* <-- aqui */
+    }
+  </style>
 </body>
+
 </html>
