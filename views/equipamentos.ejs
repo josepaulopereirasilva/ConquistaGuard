@@ -8,6 +8,7 @@
   <link rel="icon" href="/conquistaguard.ico" type="image/x-icon" />
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <header>
     <div class="logo" onclick="redirect()" style="cursor: pointer; display: inline-block;">
@@ -26,12 +27,14 @@
         <div class="mini-menu-categorias">
           <button class="mini-menu-btn">Categorias</button>
           <div class="dropdown-categorias">
-            <%const categorias = [ 'alarmes','sensores','câmeras','fechaduras','iluminação', 'kits']%>
-            <%categorias.forEach(function(categoria){%>
-              <%//TIRA O ACENTO DE CATEGORIAS, COMO O ^ EM CÂMERAS%>
-              <%let nomeCategoria = categoria.normalize('NFD').replace(/[\u0300-\u036f]/g, '')%>
-              <a href="/categoria/<%=nomeCategoria%>"><%=categoria%></a>
-            <%})%>
+            <%const categorias=[ 'alarmes' ,'sensores','câmeras','fechaduras','iluminação', 'kits' ]%>
+              <%categorias.forEach(function(categoria){%>
+                <% //TIRA O ACENTO DE CATEGORIAS, COMO O ^ EM CÂMERAS%>
+                  <%let nomeCategoria=categoria.normalize('NFD').replace(/[\u0300-\u036f]/g, '' )%>
+                    <a href="/categoria/<%=nomeCategoria%>">
+                      <%=categoria%>
+                    </a>
+                    <%})%>
           </div>
         </div>
       </div>
@@ -94,51 +97,54 @@
       window.location.href = '/'
     }
     function removeAcentos(texto) {
-  return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-}
-
-document.getElementById("botaoBusca").addEventListener("click", function () {
-  const termoBusca = removeAcentos(document.getElementById("campoBusca").value.toLowerCase());
-  const produtos = document.querySelectorAll(".produto");
-  const container_produtos = document.getElementById('produtos');
-
-  produtos.forEach(produto => {
-    const titulo = removeAcentos(produto.querySelector("h4").textContent.toLowerCase());
-    if (titulo.includes(termoBusca)) {
-      produto.style.display = "flex";
-    } else {
-      produto.style.display = "none";
-      container_produtos.style.textAlign = "center";
+      return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     }
-  });
-});
+    window.addEventListener('pageshow', (event) => {
+      document.getElementById("sugestoes").innerHTML = "";
+      document.getElementById("sugestoes").style.opacity = '0';
+    });
+    document.getElementById("botaoBusca").addEventListener("click", function () {
+      const termoBusca = removeAcentos(document.getElementById("campoBusca").value.toLowerCase());
+      const produtos = document.querySelectorAll(".produto");
+      const container_produtos = document.getElementById('produtos');
 
-const campoBusca = document.getElementById("campoBusca");
-const sugestoes = document.getElementById("sugestoes");
+      produtos.forEach(produto => {
+        const titulo = removeAcentos(produto.querySelector("h4").textContent.toLowerCase());
+        if (titulo.includes(termoBusca)) {
+          produto.style.display = "flex";
+        } else {
+          produto.style.display = "none";
+          container_produtos.style.textAlign = "center";
+        }
+      });
+    });
 
-campoBusca.addEventListener("input", () => {
-  const termo = removeAcentos(campoBusca.value.toLowerCase());
-  sugestoes.style.opacity = '100%';
-  sugestoes.innerHTML = "";
-  if (termo.length === 0) {
-    sugestoes.style.opacity = '0';
-  }
+    const campoBusca = document.getElementById("campoBusca");
+    const sugestoes = document.getElementById("sugestoes");
 
-  const titulos = document.querySelectorAll(".produto h4");
-  titulos.forEach(titulo => {
-    const texto = removeAcentos(titulo.textContent.toLowerCase());
-    if (texto.includes(termo)) {
-      const slug = titulo.closest(".produto-link").getAttribute("href").split("/produto/")[1];
-      const item = document.createElement("div");
-      item.classList.add("sugestao-item");
-      item.textContent = titulo.textContent;
-      item.onclick = () => {
-        window.location.href = `/produto/${slug}`;
-      };
-      sugestoes.appendChild(item);
-    }
-  });
-});
+    campoBusca.addEventListener("input", () => {
+      const termo = removeAcentos(campoBusca.value.toLowerCase());
+      sugestoes.style.opacity = '100%';
+      sugestoes.innerHTML = "";
+      if (termo.length === 0) {
+        sugestoes.style.opacity = '0';
+      }
+
+      const titulos = document.querySelectorAll(".produto h4");
+      titulos.forEach(titulo => {
+        const texto = removeAcentos(titulo.textContent.toLowerCase());
+        if (texto.includes(termo)) {
+          const slug = titulo.closest(".produto-link").getAttribute("href").split("/produto/")[1];
+          const item = document.createElement("div");
+          item.classList.add("sugestao-item");
+          item.textContent = titulo.textContent;
+          item.onclick = () => {
+            window.location.href = `/produto/${slug}`;
+          };
+          sugestoes.appendChild(item);
+        }
+      });
+    });
 
     document.addEventListener("click", (e) => {
       if (!document.querySelector(".div_pesquisa").contains(e.target)) {

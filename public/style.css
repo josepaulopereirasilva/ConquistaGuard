@@ -108,6 +108,7 @@ header {
       font-weight: 700;
       transition: background-color 0.3s;
       overflow: hidden;
+      height: 40px;
       /* importante para segurar ::after dentro */
     }
 

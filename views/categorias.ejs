@@ -35,7 +35,7 @@
         <div class="mini-menu-categorias">
           <button class="mini-menu-btn">Categorias</button>
           <div class="dropdown-categorias">
-            <%const categorias=[ 'alarmes' ,'sensores','câmeras','fechaduras','iluminação', 'kits']%>
+            <%const categorias=[ 'alarmes' ,'sensores','câmeras','fechaduras','iluminação', 'kits' ]%>
               <%categorias.forEach(function(categoria){%>
                 <% //TIRA O ACENTO DE CATEGORIAS, COMO O ^ EM CÂMERAS%>
                   <%let nomeCategoria=categoria.normalize('NFD').replace(/[\u0300-\u036f]/g, '' )%>
@@ -58,7 +58,8 @@
   </header>
 
   <main>
-    <h2><%=categoria%>
+    <h2>
+      <%=categoria%>
     </h2>
     <div class="lista-produtos">
       <% produtos.forEach(produto=> { %>
@@ -96,7 +97,10 @@
     function removeAcentos(texto) {
       return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     }
-
+    window.addEventListener('pageshow', (event) => {
+      document.getElementById("sugestoes").innerHTML = "";
+      document.getElementById("sugestoes").style.opacity = '0';
+    });
     document.getElementById("botaoBusca").addEventListener("click", function () {
       const termoBusca = removeAcentos(document.getElementById("campoBusca").value.toLowerCase());
       const produtos = document.querySelectorAll(".produto");
