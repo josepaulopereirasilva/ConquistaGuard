@@ -18,7 +18,6 @@ app.use(session({
 }));
 
 app.use((req, res, next) => {
-  console.log('Host recebido:', req.headers.host);
   next();
 });
 
