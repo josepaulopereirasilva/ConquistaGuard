@@ -49,7 +49,47 @@
     }
   </style>
 </head>
+
 <body>
+  <script src="https://sdk.mercadopago.com/js/v2"></script>
+  <script>
+    const mp = new MercadoPago('APP_USR-e7125dda-15ec-498d-a839-dd31e046a6fd', {
+      locale: 'pt-BR'
+    });
+
+    async function comprarProduto() {
+      try {
+        const response = await fetch('/create_preference', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            title: '<%= produto.nome %>',
+            price: Number(String('<%= produto.preco %>').replace('R$', '').replace('.', '').replace(',', '.')),
+            quantity: 1
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.id) {
+          mp.checkout({
+            preference: {
+              id: data.id
+            },
+            autoOpen: true
+          });
+        } else {
+          alert('Erro ao iniciar pagamento.');
+        }
+      } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro ao conectar com o servidor.');
+      }
+    }
+  </script>
+
   <header>
     <div class="logo" onclick="redirect()" style="cursor: pointer; display: inline-block;">
       <img src="/conquistaguard.ico" alt="ConquistaGuard Logo" style="height: 100px;">
@@ -69,20 +109,21 @@
     <strong><p style="margin: 0; padding: 0; margin-bottom: -40px; color: #000; font-size: 64px;"><%= produto.preco %></p></strong>
     <br>
     <div>
-      <button onclick="alert('Compra simulada! Em breve você poderá finalizar o pagamento.')">Comprar</button>
+      <button onclick="comprarProduto()">Comprar</button>
     </div>
     <h1>Descrição do Produto:</h1>
     <% produto.descricao.split('//enter').forEach(function(parte) { %>
-  <p><%= parte %></p>
-<% }); %>
+      <p><%= parte %></p>
+    <% }); %>
   </main>
 
   <footer>
     <p>&copy; 2025 ConquistaGuard. Todos os direitos reservados.</p>
   </footer>
+
   <script>
     function redirect() {
-      window.location.href = '/'
+      window.location.href = '/';
     }
   </script>
   <style>

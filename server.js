@@ -7,15 +7,20 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3000;
 
+// Adicionando Mercado Pago
+const { MercadoPagoConfig, Preference } = require('mercadopago');
+const mpClient = new MercadoPagoConfig({ accessToken: 'APP_USR-1174741812605708-072113-72087bc2ea8f609905e2099d7dd9412e-33138528' });
+const preference = new Preference(mpClient);
+
 app.use(express.json({ limit: '10mb' })); // Aumenta limite p/ imagens base64
 app.use(cors());
-
 app.use(session({
   secret: 'conquistaGuardCuidandoDeVoce',
   resave: false,
   saveUninitialized: false,
   cookie: { secure: false }
 }));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
   next();
@@ -24,9 +29,6 @@ app.use((req, res, next) => {
 // Configuração do EJS
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-
-// Arquivos estáticos
-app.use(express.static(path.join(__dirname, 'public')));
 
 // Página inicial
 app.get('/', (req, res) => {
@@ -60,6 +62,35 @@ app.get('/produto/:nome', async (req, res) => {
   } catch (error) {
     console.error('Erro ao buscar produto:', error);
     res.status(500).send('Erro ao carregar produto');
+  }
+});
+
+// NOVA ROTA: Criar preferência Mercado Pago
+app.post('/create_preference', async (req, res) => {
+  const { title, price, quantity } = req.body;
+
+  const preferenceData = {
+    items: [
+      {
+        title: title,
+        unit_price: parseFloat(price),
+        quantity: parseInt(quantity)
+      }
+    ],
+    back_urls: {
+      success: '/',
+      failure: '/',
+      pending: '/'
+    },
+    auto_return: 'approved'
+  };
+
+  try {
+    const result = await preference.create({ body: preferenceData });
+    res.json({ id: result.id });
+  } catch (error) {
+    console.error('Erro ao criar preferência Mercado Pago:', error);
+    res.status(500).json({ error: 'Erro ao criar preferência' });
   }
 });
 
@@ -101,7 +132,6 @@ app.get('/admin', verificaLogin, async (req, res) => {
   }
 });
 
-
 // Middleware de login
 function verificaLogin(req, res, next) {
   if (req.session && req.session.user) {
@@ -136,10 +166,9 @@ app.post('/admin/update/:id', async (req, res) => {
   const { id } = req.params;
   let { nome, preco, descricao, img, categoria, estoque } = req.body;
 
-  // Garantir que img fique só com o base64 puro
   if (img) {
     if (img.startsWith('data:')) {
-      img = img.split(',')[1];  // remove 'data:image/jpeg;base64,'
+      img = img.split(',')[1]; // remove 'data:image/jpeg;base64,'
     }
   }
 
@@ -178,32 +207,24 @@ app.post('/admin/delete/:id', async (req, res) => {
   }
 });
 
-app.get('/categoria/:nomeCategoria', async(req,res)=>{
-  const categoria = req.params.nomeCategoria
-  if(categoria !== 'todos'){
-  const produtos = await prisma.produtos.findMany({
-    where:{
-      categoria:{
-        contains:categoria,
-        mode:"insensitive"
-      }
-    }
-  })
-  if(produtos){
-    res.render("categorias",{produtos, categoria})
-  }
-  }
-  else{
+app.get('/categoria/:nomeCategoria', async (req, res) => {
+  const categoria = req.params.nomeCategoria;
+  if (categoria !== 'todos') {
     const produtos = await prisma.produtos.findMany({
-    where:{
-      categoria:{
-        contains:"",
-        mode:"insensitive"
+      where: {
+        categoria: {
+          contains: categoria,
+          mode: "insensitive"
+        }
       }
+    });
+    if (produtos) {
+      res.render("categorias", { produtos, categoria });
     }
-  })
-  if(produtos){
-    res.render("categorias",{produtos, categoria})
+  } else {
+    const produtos = await prisma.produtos.findMany();
+    if (produtos) {
+      res.render("categorias", { produtos, categoria });
+    }
   }
-  }
-})
+});
