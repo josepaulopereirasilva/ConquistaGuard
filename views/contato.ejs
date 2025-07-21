@@ -42,7 +42,7 @@
   <main class="conteudo">
 
     <form action="https://formsubmit.co/jeanphillip399@gmail.com" method="POST">
-      <h1 style="margin-left: 10%;">Fale Conosco por E-mail:</h1>
+      <h1 id="faleConosco">Fale Conosco por E-mail:</h1>
       <input type="text" name="name" placeholder="Seu nome" required />
       <input type="email" name="email" placeholder="Seu e-mail" required />
       <textarea name="message" placeholder="Sua mensagem" required></textarea>
@@ -73,7 +73,13 @@
       resize: vertical;
       /* <-- aqui */
     }
+    #faleConosco{
+      margin-left: 10%;
+    }
     @media (max-width:768px) {
+      #faleConosco{
+        margin-left: 0px;
+      }
       #whatsapp{
         display: block;
         align-items: flex-start;
