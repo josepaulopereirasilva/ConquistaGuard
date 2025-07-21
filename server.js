@@ -17,6 +17,11 @@ app.use(session({
   cookie: { secure: false }
 }));
 
+app.use((req, res, next) => {
+  console.log('Host recebido:', req.headers.host);
+  next();
+});
+
 // Configuração do EJS
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
