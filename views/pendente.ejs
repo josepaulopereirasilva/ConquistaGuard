@@ -38,7 +38,7 @@
 </head>
 <body>
   <h1>Seu pagamento está pendente</h1>
-  <p>Aguardamos a confirmação do Mercado Pago. Você pode verificar o status no seu e-mail ou voltar mais tarde.</p>
+  <p>Aguardamos a confirmação do Mercado Pago. Assim que seu pagamento for reconhecido, o Mercado Pago encaminhará para seu E-mail.</p>
   <a class="button" href="/">Voltar à Loja</a>
   <script>
     setInterval(async () => {
@@ -48,7 +48,7 @@
   if (status === 'approved') {
     window.location.href = '/pedido-finalizado';
   }
-}, 5000); // a cada 5 segundos
+}, 2000);
   </script>
 </body>
 </html>
