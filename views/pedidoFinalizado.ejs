@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Compra finalizada com sucesso!</h1>
+<a id="whatsappLink" href="#" target="_blank">Clique aqui para confirmar no WhatsApp</a>
+
+<script>
+  window.onload = function() {
+    const produto = '<%= produto %>';
+    const valor = '<%= valor %>';
+    const nome = '<%= nome %>';
+    const data = '<%= data %>';
+
+    const mensagem = `Olá! Finalizei a compra do produto ${produto}, valor ${valor}, no nome de ${nome}, na data ${data}.`;
+
+    const linkWhatsApp = `https://wa.me/SEUNUMEROWHATSAPP?text=${encodeURIComponent(mensagem)}`;
+    document.getElementById('whatsappLink').href = linkWhatsApp;
+
+    // Ou redirecionamento automático:
+    // window.location.href = linkWhatsApp;
+  };
+</script>
+</body>
+</html>

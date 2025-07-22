@@ -11,6 +11,7 @@ const PORT = process.env.PORT || 3000;
 const { MercadoPagoConfig, Preference } = require('mercadopago');
 const mpClient = new MercadoPagoConfig({ accessToken: 'APP_USR-1174741812605708-072113-72087bc2ea8f609905e2099d7dd9412e-33138528' });
 const preference = new Preference(mpClient);
+const siteUrl = 'https://conquistaguard.com'
 
 app.use(express.json({ limit: '10mb' })); // Aumenta limite p/ imagens base64
 app.use(cors());
@@ -77,9 +78,9 @@ app.post('/create_preference', async (req, res) => {
       }
     ],
     back_urls: {
-      success: '/',
-      failure: '/',
-      pending: '/'
+      success: `${siteUrl}/pedido-finalizado?produto=${encodeURIComponent(title)}&valor=${price}&nome=CLIENTE_NOME_AQUI`,
+      failure: `${siteUrl}/falha`,
+      pending: `${siteUrl}/pendente`
     },
     auto_return: 'approved'
   };
@@ -226,4 +227,13 @@ app.get('/categoria/:nomeCategoria', async (req, res) => {
       res.render("categorias", { produtos, categoria });
     }
   }
+});
+
+app.get('/pedido-finalizado', (req, res) => {
+  res.render('pedidoFinalizado', {
+    produto: req.query.produto,
+    valor: req.query.valor,
+    nome: req.query.nome,
+    data: new Date().toLocaleDateString()
+  });
 });
