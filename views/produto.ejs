@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="UTF-8" />
-  <title><%= produto.nome %> - ConquistaGuard</title>
+  <title>
+    <%= produto.nome %> - ConquistaGuard
+  </title>
   <link rel="icon" href="/conquistaguard.ico" type="image/x-icon">
   <link rel="stylesheet" href="/style.css">
   <style>
@@ -12,25 +15,30 @@
       margin: 0 auto;
       text-align: center;
     }
+
     .produto-container img {
       width: 100%;
       max-height: 300px;
       object-fit: contain;
       border-radius: 10px;
     }
+
     .produto-container h1 {
       color: #ffcc00;
       font-size: 28px;
       margin-top: 20px;
     }
+
     .produto-container p {
       color: #757575;
       margin: 15px 0;
     }
+
     .produto-container strong {
       color: #ffcc00;
       font-size: 1.8em;
     }
+
     .produto-container button {
       margin-top: 20px;
       background-color: #ffcc00;
@@ -40,10 +48,11 @@
       font-weight: bold;
       cursor: pointer;
       transition: background 0.3s;
-      font-size:32px;
+      font-size: 32px;
       height: 100px;
       width: 400px;
     }
+
     .produto-container button:hover {
       background-color: #e6b800;
     }
@@ -105,16 +114,31 @@
 
   <main class="produto-container">
     <img src="<%= produto.img.startsWith('data:') ? produto.img : 'data:image/jpeg;base64,' + produto.img %>" alt="...">
-    <h1><%= produto.nome %></h1>
-    <strong><p style="margin: 0; padding: 0; margin-bottom: -40px; color: #000; font-size: 64px;"><%= produto.preco %></p></strong>
+    <h1>
+      <%= produto.nome %>
+    </h1>
+    <strong>
+      <p style="margin: 0; padding: 0; margin-bottom: -40px; color: #000; font-size: 64px;">
+        <%= produto.preco %>
+      </p>
+    </strong>
+    <br>
+    <br>
+    <form id="freteForm" style= "align-items: center;">
+      <input type="text" id="cep" placeholder="Digite seu CEP" required style="width: 70%;">
+      <button type="submit" style="max-width: 250px; max-height:70px; font-size: 28px;">Calcular Frete</button>
+    </form>
     <br>
     <div>
+      <div id="resultadoFrete"></div>
       <button onclick="comprarProduto()">Comprar</button>
     </div>
     <h1>Descrição do Produto:</h1>
     <% produto.descricao.split('//enter').forEach(function(parte) { %>
-      <p><%= parte %></p>
-    <% }); %>
+      <p>
+        <%= parte %>
+      </p>
+      <% }); %>
   </main>
 
   <footer>
@@ -122,6 +146,22 @@
   </footer>
 
   <script>
+    //CALCULANDO FRETE
+    document.getElementById('freteForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const cep = document.getElementById('cep').value;
+      const resposta = await fetch(`/calcular-frete/${cep}`);
+      const resultado = await resposta.json();
+      if (resultado && resultado.length > 0) {
+        let texto = '';
+        resultado.forEach(frete => {
+          texto += `Serviço: ${frete.Codigo === '04014' ? 'SEDEX' : 'PAC'} - Valor: R$ ${frete.Valor}, Prazo: ${frete.PrazoEntrega} dias\n`;
+        });
+        document.getElementById('resultadoFrete').innerText = texto;
+      } else {
+        document.getElementById('resultadoFrete').innerText = 'Nenhum resultado encontrado.';
+      }
+    });
     function redirect() {
       window.location.href = '/';
     }
@@ -132,4 +172,5 @@
     }
   </style>
 </body>
+
 </html>
