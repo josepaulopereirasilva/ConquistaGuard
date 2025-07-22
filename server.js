@@ -237,3 +237,22 @@ app.get('/pedido-finalizado', (req, res) => {
     data: new Date().toLocaleDateString()
   });
 });
+
+app.get('/pendente', (req, res) => {
+  res.render('pendente');
+});
+app.post('/webhook', express.json(), (req, res) => {
+  const evento = req.body;
+
+  console.log('Webhook recebido:', evento);
+
+  if (evento.type === 'payment') {
+    const paymentId = evento.data.id;
+
+    // Aqui você chama a API do Mercado Pago para pegar detalhes do pagamento
+    // e atualiza no banco de dados
+    atualizarStatusDoPedido(paymentId);
+  }
+
+  res.status(200).send('OK');
+});

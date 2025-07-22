@@ -125,8 +125,15 @@
     </strong>
     <br>
     <div>
-      <div id="resultadoFrete"></div>
       <button onclick="comprarProduto()">Comprar</button>
+      <p style="margin-top: 20px; font-size: 16px; color: #333;">
+    📲OBS: Favor enviar o comprovante para nosso WhatsApp assim que o pagamento for confirmado.
+  </p>
+   <a href="https://wa.me/5577988148527" target="_blank"
+          style="display:inline-flex; align-items:center; gap:8px; margin-top:15px; text-decoration:none;">
+          <img src="/whatsapp.png" alt="WhatsApp" style="width:30px; height:30px;">
+          <span style="font-size:16px; color:#000;">WhatsApp</span>
+        </a>
     </div>
     <h1>Descrição do Produto:</h1>
     <% produto.descricao.split('//enter').forEach(function(parte) { %>

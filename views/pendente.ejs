@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Pagamento Pendente - ConquistaGuard</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    body {
+      background-color: white;
+      text-align: center;
+      padding: 50px;
+      font-family: Arial, sans-serif;
+    }
+    h1 {
+      color: #ffcc00;
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+    p {
+      font-size: 20px;
+      color: #555;
+      margin-bottom: 40px;
+    }
+    a.button {
+      display: inline-block;
+      background-color: #ffcc00;
+      color: #000;
+      padding: 15px 30px;
+      font-size: 20px;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+    a.button:hover {
+      background-color: #e6b800;
+    }
+  </style>
+</head>
+<body>
+  <h1>Seu pagamento está pendente</h1>
+  <p>Aguardamos a confirmação do Mercado Pago. Você pode verificar o status no seu e-mail ou voltar mais tarde.</p>
+  <a class="button" href="/">Voltar à Loja</a>
+  <script>
+    setInterval(async () => {
+  const resposta = await fetch('/status-pedido?id=123');
+  const status = await resposta.json();
+
+  if (status === 'approved') {
+    window.location.href = '/pedido-finalizado';
+  }
+}, 5000); // a cada 5 segundos
+  </script>
+</body>
+</html>
