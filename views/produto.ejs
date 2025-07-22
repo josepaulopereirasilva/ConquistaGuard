@@ -123,12 +123,6 @@
       </p>
     </strong>
     <br>
-    <br>
-    <form id="freteForm" style= "align-items: center;">
-      <input type="text" id="cep" placeholder="Digite seu CEP" required style="width: 70%;">
-      <button type="submit" style="max-width: 250px; max-height:70px; font-size: 28px;">Calcular Frete</button>
-    </form>
-    <br>
     <div>
       <div id="resultadoFrete"></div>
       <button onclick="comprarProduto()">Comprar</button>
@@ -146,22 +140,7 @@
   </footer>
 
   <script>
-    //CALCULANDO FRETE
-    document.getElementById('freteForm').addEventListener('submit', async function (e) {
-      e.preventDefault();
-      const cep = document.getElementById('cep').value;
-      const resposta = await fetch(`/calcular-frete/${cep}`);
-      const resultado = await resposta.json();
-      if (resultado && resultado.length > 0) {
-        let texto = '';
-        resultado.forEach(frete => {
-          texto += `Serviço: ${frete.Codigo === '04014' ? 'SEDEX' : 'PAC'} - Valor: R$ ${frete.Valor}, Prazo: ${frete.PrazoEntrega} dias\n`;
-        });
-        document.getElementById('resultadoFrete').innerText = texto;
-      } else {
-        document.getElementById('resultadoFrete').innerText = 'Nenhum resultado encontrado.';
-      }
-    });
+
     function redirect() {
       window.location.href = '/';
     }

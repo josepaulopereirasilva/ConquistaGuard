@@ -6,7 +6,6 @@ const session = require('express-session');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3000;
-const { calcularPrecoPrazo } = require('correios-brasil')
 
 // Adicionando Mercado Pago
 const { MercadoPagoConfig, Preference } = require('mercadopago');
@@ -226,35 +225,5 @@ app.get('/categoria/:nomeCategoria', async (req, res) => {
     if (produtos) {
       res.render("categorias", { produtos, categoria });
     }
-  }
-});
-
-app.get('/calcular-frete/:cep', async (req, res) => {
-  const cepDestino = req.params.cep;
-  const args = {
-    sCepOrigem: '45028365',
-    sCepDestino: cepDestino,
-    nVlPeso: '1',
-    nCdFormato: '1',
-    nVlComprimento: '20',
-    nVlAltura: '20',
-    nVlLargura: '20',
-    nCdServico: ['04014', '04510'],
-    nVlDiametro: '0',
-  };
-
-  try {
-    console.log('Chamando Correios com args:', args);
-    const response = await calcularPrecoPrazo(args);
-    console.log('Resposta dos Correios:', response);
-
-    if (response && response.length > 0) {
-      res.json(response);
-    } else {
-      res.status(500).json({ error: 'Sem resposta dos Correios' });
-    }
-  } catch (err) {
-    console.error('Erro no cálculo de frete:', err);
-    res.status(500).json({ error: 'Erro ao calcular frete', details: err });
   }
 });
